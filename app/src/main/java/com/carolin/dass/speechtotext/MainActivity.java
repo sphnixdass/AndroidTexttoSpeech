@@ -108,13 +108,15 @@ public class MainActivity extends AppCompatActivity {
                         .getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
 
                 //displaying the first match
-                if (matches != null)
-                    editText.setText(editText.getText() + " " +  matches.get(0));
-                    if (varflag = true)
-                    {
+                if (matches != null) {
+                    editText.setText(editText.getText() + " " + matches.get(0));
+                    if (varflag = true) {
                         mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
                     }
-
+                }else
+                {
+                    mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
+                }
 
 
             }
