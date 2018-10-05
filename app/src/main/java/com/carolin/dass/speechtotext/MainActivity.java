@@ -12,10 +12,12 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.content.Intent;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -36,7 +38,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         checkPermission();
         final EditText editText = findViewById(R.id.editText);
-        final Button clickButton = (Button) findViewById(R.id.BtnStart);
+        final EditText emailidtext = findViewById(R.id.emailid);
+        //final Button clickButton = (Button) findViewById(R.id.BtnStart);
 
 //
 //        findViewById(R.id.button).setOnTouchListener(new View.OnTouchListener() {
@@ -110,9 +113,9 @@ public class MainActivity extends AppCompatActivity {
                 //displaying the first match
                 if (matches != null) {
                     editText.setText(editText.getText() + " " + matches.get(0));
-                    if (varflag = true) {
+                    //if (varflag = true) {
                         mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
-                    }
+                    //}
                 }else
                 {
                     mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
@@ -164,22 +167,54 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        //Button clickButton = (Button) findViewById(R.id.BtnStart);
+        Button clickButton = (Button) findViewById(R.id.BtnStart);
         clickButton.setOnClickListener( new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
+                Toast.makeText(MainActivity.this, "Listening Started....", Toast.LENGTH_SHORT).show();
+                mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
+
+                /*
                 if(clickButton.getText() == "Start") {
                     varflag = true;
                     clickButton.setText("Stop");
+                    clickButton.refreshDrawableState();
                     mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
                 } else
                 {
                     clickButton.setText("Start");
                     varflag = false;
                 }
+*/
 
+            }
+        });
+
+
+        Button clickstop = (Button) findViewById(R.id.btnstop);
+        clickstop.setOnClickListener( new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                Toast.makeText(MainActivity.this, "Listening Stopped", Toast.LENGTH_SHORT).show();
+                mSpeechRecognizer.stopListening();
+
+
+            }
+        });
+
+
+        Button clickemail = (Button) findViewById(R.id.btnemail);
+        clickemail.setOnClickListener( new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+
+                sendEmail(emailidtext.getText().toString(), editText.getText().toString());
 
             }
         });
@@ -188,6 +223,29 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+    }
+
+    protected void sendEmail(String toadd, String bodytxt) {
+        Log.i("Send email", "");
+        String[] TO = {""};
+        String[] CC = {""};
+        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+
+        emailIntent.setData(Uri.parse("mailto:"));
+        emailIntent.setType("text/plain");
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, toadd);
+        //emailIntent.putExtra(Intent.EXTRA_CC, CC);
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Email from Speech to text app");
+        emailIntent.putExtra(Intent.EXTRA_TEXT, bodytxt);
+
+        try {
+            startActivity(Intent.createChooser(emailIntent, "Send mail..."));
+            finish();
+            Toast.makeText(MainActivity.this, "Email has been sent", Toast.LENGTH_SHORT).show();
+            Log.i("Finished sending email.", "");
+        } catch (android.content.ActivityNotFoundException ex) {
+            Toast.makeText(MainActivity.this, "There is no email client installed.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void checkPermission() {
